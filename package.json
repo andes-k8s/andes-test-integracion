@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/andes/andes-test-integracion#readme",
   "devDependencies": {
-    "cypress": "^3.1.0"
+    "cypress": "^3.1.5"
   }
 }
