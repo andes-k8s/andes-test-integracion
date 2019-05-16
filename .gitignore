@@ -1,2 +1,7 @@
 .vscode
+
+config.private
+
 node_modules
+
+config.private.js
