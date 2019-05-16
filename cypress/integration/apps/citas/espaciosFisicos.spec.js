@@ -1,3 +1,6 @@
+import {
+    testearPermisoAccesoModulo
+} from './../../util'
 import { USER_USR_LOGIN, USER_PWRD_LOGIN } from '../../../../config.private'
 /// <reference types="Cypress" />
 // Prueba para realizar desde la organización Hospital Castro Rendón.
@@ -13,8 +16,16 @@ context('CITAS - Espacios físicos', () => {
     })
 
     beforeEach(() => {
-        cy.goto('/tm/mapa_espacio_fisico', token);
+        cy.goto(Cypress.env('ROUTE_MAPA_ESPACIO_FISICO'), token);
     })
+
+    it('Testear permisos de acceso al mapa de espacios físicos', () => {
+        const permiso = 'espaciosFisicos:*';
+        const modulo = 'espaciosFisicos';
+        const ruta = Cypress.env('ROUTE_MAPA_ESPACIO_FISICO');
+
+        testearPermisoAccesoModulo(permiso, modulo, ruta);
+    });
 
     it('Filtrar espacios físicos', () => {
         cy.server()
