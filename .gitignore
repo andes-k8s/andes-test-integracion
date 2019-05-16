@@ -1,7 +1,14 @@
+
+# Archivos de configuración
 .vscode
+<<<<<<< HEAD
 
 config.private
 
 node_modules
 
 config.private.js
+=======
+node_modules
+config.private.?s
+>>>>>>> 7929273c4ce0631e0ab4a75e3b89c8fbaa0584d2
