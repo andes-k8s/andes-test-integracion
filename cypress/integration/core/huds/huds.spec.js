@@ -9,7 +9,6 @@ import {
 /// <reference types="Cypress" />
 
 context('HUDS', () => {
-    let token;
     before(() => {
         cy.login(USER_USR_LOGIN, USER_PWRD_LOGIN);
     })

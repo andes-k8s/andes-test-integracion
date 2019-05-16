@@ -1,13 +1,21 @@
+import {
+    testearPermisoAccesoModulo
+} from '../util'
+import {
+    USER_USR_LOGIN,
+    USER_PWRD_LOGIN
+} from '../../../config.private';
 
 
 /// <reference types="Cypress" />
 
 context('Aliasing', () => {
     let token
+    
     before(() => {
-        cy.login('38906735', 'asd').then(t => {
+        cy.login(USER_USR_LOGIN, USER_PWRD_LOGIN).then(t => {
             token = t;
-        })
+        });
     })
 
     beforeEach(() => {
@@ -19,6 +27,14 @@ context('Aliasing', () => {
             }
         });
     })
+
+    it('Testear permisos de acceso al módulo', () => {
+        const permiso = "solicitudes:*";
+        const modulo = "solicitudes";
+        const ruta = Cypress.env('ROUTE_SOLICITUDES');
+
+        testearPermisoAccesoModulo(permiso, modulo, ruta);
+    });
 
     it('crear solicitud de salida', () => {
         cy.server();

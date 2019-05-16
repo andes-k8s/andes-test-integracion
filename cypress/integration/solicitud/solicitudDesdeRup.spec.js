@@ -1,13 +1,16 @@
-
+import {
+    USER_USR_LOGIN,
+    USER_PWRD_LOGIN
+} from '../../../config.private';
 
 /// <reference types="Cypress" />
 
 context('Aliasing', () => {
     let token
     before(() => {
-        cy.login('38906735', 'asd').then(t => {
+        cy.login(USER_USR_LOGIN, USER_PWRD_LOGIN).then(t => {
             token = t;
-        })
+        });
     })
 
     beforeEach(() => {
