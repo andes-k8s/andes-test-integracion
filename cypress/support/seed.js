@@ -116,3 +116,16 @@ Cypress.Commands.add('createSolicitud', (name, token) => {
     });
 });
 
+Cypress.Commands.add('createOrganizacion', (name, token) => {
+    return cy.fixture(name).then((solicitud) => {
+        cy.request({
+            method: 'POST',
+            url: Cypress.env('API_SERVER') + '/api/core/tm/organizaciones',
+            body: solicitud,
+            headers: {
+                Authorization: `JWT ${token}`
+            }
+        });
+    });
+});
+
