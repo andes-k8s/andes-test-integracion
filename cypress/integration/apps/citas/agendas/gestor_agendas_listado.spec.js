@@ -3,14 +3,13 @@ context('CITAS - Gestor de Agendass', () => {
     let token
     before(() => {
         cy.seed();
-        cy.login('38906735', 'asd', '57f67a7ad86d9f64130a138d').then(t => {
-            cy.log(t);
+        cy.task('database:seed:agenda', { profesionales: '5d49fa8bb6834a1d95e277b8', inicio: 1, fin: 3 });
+        cy.task('database:seed:agenda', { tipoPrestaciones: '57f505e669fe79a598efbbfd', pacientes: '586e6e8627d3107fde116cdb', estado: 'planificacion', fecha: 1, inicio: 1, fin: 3 });
+        cy.task('database:seed:agenda', { tipoPrestaciones: '57f505e669fe79a598efbbfd', estado: 'planificacion', inicio: 1, fin: 3 });
+        cy.task('database:seed:agenda', { estado: 'planificacion', fecha: -1, inicio: 1, fin: 3 });
+        cy.task('database:seed:agenda', { estado: 'planificacion', fecha: 1, inicio: 1, fin: 3 });
+        cy.login('30643636', 'asd').then(t => {
             token = t;
-            cy.createAgenda('apps/citas/agendas/gestor-agendas-listado/agendaMedicinaGeneralPlanificada', 0, 0, 1, token);
-            cy.createAgenda('apps/citas/agendas/gestor-agendas-listado/agendaMedicinaGeneralPlanificada', -1, 0, 1, token);
-            cy.createAgenda('apps/citas/agendas/gestor-agendas-listado/agendaMedicinaGeneralPlanificada', 1, 0, 1, token);
-            cy.createAgenda('apps/citas/agendas/gestor-agendas-listado/agenda-turno-dia', 0, 0, 3, token);
-            cy.createProfesional('profesional', token);
 
         });
     })
@@ -57,7 +56,7 @@ context('CITAS - Gestor de Agendass', () => {
 
     it('visualizar agendas del dia y por tipo de prestacion', () => {
         cy.wait('@getTiposPrestacion');
-        cy.plexSelectType('label="Prestación"', 'Consulta de cardiología');
+        cy.plexSelectType('label="Prestación"', 'consulta para cuidados paliativos (procedimiento)');
         cy.wait('@getAgendas').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
             expect(xhr.response.body.length).to.be.eq(1);
@@ -75,6 +74,16 @@ context('CITAS - Gestor de Agendass', () => {
 
     });
 
+    it('filtar agendas por profesional sin agendas', () => {
+        cy.plexButtonIcon('chevron-down').click();
+        cy.plexSelectAsync('label="Equipo de Salud"', 'CORTES JAZMIN', '@getProfesionales', 0);
+        cy.wait('@getAgendas').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+            expect(xhr.response.body.length).to.be.eq(0);
+        });
+
+    });
+
     it('visualizar agendas por profesional', () => {
         cy.plexButtonIcon('chevron-down').click();
         cy.plexSelectAsync('label="Equipo de Salud"', 'ESPOSITO ALICIA BEATRIZ', '@getProfesionales', 0);
@@ -85,15 +94,6 @@ context('CITAS - Gestor de Agendass', () => {
 
     });
 
-    it('filtar agendas por profesional sin agendas', () => {
-        cy.plexButtonIcon('chevron-down').click();
-        cy.plexSelectAsync('label="Equipo de Salud"', 'CORTES JAZMIN', '@getProfesionales', 0);
-        cy.wait('@getAgendas').then((xhr) => {
-            expect(xhr.status).to.be.eq(200);
-            expect(xhr.response.body.length).to.be.eq(0);
-        });
-
-    });
 
     it('Visualizar detalle de agenda sin turnos asignados', () => {
         cy.get('table tbody tr').first().click();
@@ -106,6 +106,8 @@ context('CITAS - Gestor de Agendass', () => {
     });
 
     it('Visualizar botonera de acciones para agenda planificada', () => {
+        cy.plexButtonIcon('chevron-down').click();
+        cy.selectOption('label="Estado"', 'planificacion');
         cy.get('table tbody tr').first().click();
         cy.get('botones-agenda').plexButtonIcon('pencil');
         cy.get('botones-agenda').plexButtonIcon('arrow-up-bold-circle-outline');
@@ -124,11 +126,11 @@ context('CITAS - Gestor de Agendass', () => {
         cy.get("span").contains("En planificación")
         cy.plexButtonIcon('chevron-down').click();
         cy.get('label').contains("Fecha").parent().contains(
-            `${Cypress.moment().format('DD/MM/YYYY')}, ${Cypress.moment().set({ 'minute': 0, 'second': 0 }).format('HH:mm')} a ${Cypress.moment().add(1, 'hours').set({ 'minute': 0, 'second': 0 }).format('HH:mm')} hs`);
+            `${Cypress.moment().format('DD/MM/YYYY')}, ${Cypress.moment().add(1, 'hours').set({ 'minute': 0, 'second': 0 }).format('HH:mm')} a ${Cypress.moment().add(3, 'hours').set({ 'minute': 0, 'second': 0 }).format('HH:mm')} hs`);
 
-        cy.get('label').contains("Tipos de prestación").parent().contains('consulta de medicina general');
-        cy.get('label').contains("Equipo de Salud").parent().get('div').contains('Riquelme, Gustavo Manuel');
-        cy.get('label').contains("Espacio físico").parent().get('div').contains('Consultorio');
+        cy.get('label').contains("Tipos de prestación").parent().contains('consulta para cuidados paliativos (procedimiento)');
+        cy.get('label').contains("Equipo de Salud").parent().get('div').contains('HUENCHUMAN, NATALIA VANESA');
+        cy.get('label').contains("Espacio físico").parent().get('div').contains('Espacio físico no asignado');
 
         //TODO: TESTS PARA CONTADORES DE TURNOS
 
