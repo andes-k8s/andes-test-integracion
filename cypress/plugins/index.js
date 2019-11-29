@@ -11,9 +11,9 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
-const { seedAgenda } = require('./seed-agenda');
-const { dropCollection } = require('./seed-drop');
-const { seedPaciente, createPaciente } = require('./seed-paciente');
+const {
+    seedUsuario
+} = require('./seed-usuario');
 
 
 module.exports = (on, config) => {
@@ -42,6 +42,9 @@ module.exports = (on, config) => {
         },
         'database:seed:agenda': (dto) => {
             return seedAgenda(mongoUri, dto);
+        },
+        'database:seed:usuario': (dto) => {
+            return seedUsuario(mongoUri, dto);
         }
     });
 
