@@ -14,6 +14,9 @@
 const {
     seedUsuario
 } = require('./seed-usuario');
+const {
+    seedPerfil
+} = require('./seed-perfil');
 
 
 module.exports = (on, config) => {
@@ -45,6 +48,9 @@ module.exports = (on, config) => {
         },
         'database:seed:usuario': (dto) => {
             return seedUsuario(mongoUri, dto);
+        },
+        'database:seed:perfil': (dto) => {
+            return seedPerfil(mongoUri, dto);
         }
     });
 
