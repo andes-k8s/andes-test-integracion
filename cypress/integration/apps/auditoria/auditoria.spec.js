@@ -74,28 +74,28 @@ context('auditoria', () => {
         cy.plexText('name="buscador"', temporal1.documento);
         cy.wait('@busquedaPaciente').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
+            cy.get('paciente-listado').find('td').contains(temporal1.nombre).click();
+            cy.plexButton('Vincular').click();
+            cy.wait('@busquedaPaciente').then((xhr) => {
+                expect(xhr.status).to.be.eq(200);
+                cy.plexText('name="buscador"', temporal2.documento);
+                cy.wait('@busquedaPaciente').then((xhr) => {
+                    expect(xhr.status).to.be.eq(200);
+                    cy.get('paciente-listado').find('td').contains(temporal2.nombre).click();
+
+                    cy.plexButton('Vincular').click();
+                    cy.get('button').contains('CONFIRMAR').click();
+
+                    cy.wait('@vincularPaciente').then((xhr) => {
+                        expect(xhr.status).to.be.eq(200);
+                        expect(xhr.response.body.vinculos).to.have.length(2);
+                        cy.get('tbody tr').first().find('span').should('have.class', 'badge badge-success').should('contain', 'Activo'); // valido que la persona buscada esté validada y la selecciono
+                        cy.get('plex-button[label="Desactivar"]').should('have.attr', 'type', 'warning');
+                    });
+                });
+            });
         });
 
-        cy.get('paciente-listado').find('td').contains(temporal1.nombre).click();
-        cy.plexButton('Vincular').click();
-        cy.wait('@busquedaPaciente').then((xhr) => {
-            expect(xhr.status).to.be.eq(200);
-        });
-        cy.plexText('name="buscador"', temporal2.documento);
-        cy.wait('@busquedaPaciente').then((xhr) => {
-            expect(xhr.status).to.be.eq(200);
-        });
-        cy.get('paciente-listado').find('td').contains(temporal2.nombre).click();
-
-        cy.plexButton('Vincular').click();
-        cy.get('button').contains('CONFIRMAR').click();
-
-        cy.wait('@vincularPaciente').then((xhr) => {
-            expect(xhr.status).to.be.eq(200);
-            expect(xhr.response.body.vinculos).to.have.length(2);
-        });
-        cy.get('tbody tr').first().find('span').should('have.class', 'badge badge-success').should('contain', 'Activo'); // valido que la persona buscada esté validada y la selecciono
-        cy.get('plex-button[label="Desactivar"]').should('have.attr', 'type', 'warning');
     });
 
     it('vincular un paciente validado con uno temporal', () => {
