@@ -3,7 +3,7 @@
 context('RUP - Punto de inicio', () => {
     let token
     before(() => {
-        cy.seed();
+        // cy.seed();
         cy.login('38906735', 'asd').then(t => {
             token = t;
             cy.createPaciente('paciente-rup', token);
@@ -12,9 +12,97 @@ context('RUP - Punto de inicio', () => {
             cy.createAgenda('agenda-rup', 0, 0, 1, token);
 
         })
-    })
+    });
 
-    it('Iniciar prestación - Fuera de agenda', () => {
+    it('Registrar C2', () => {
+        cy.goto('/rup', token);
+
+        cy.server();
+        const fixtures = [];
+        const fixturesCie10 = [];
+        cy.fixture('conceptos-snomed-c2.json').then(json => {
+            fixtures.push(json);
+        });
+        cy.fixture('snomed-cie10.json').then(json => {
+            fixturesCie10.push(json);
+        });
+        // Stub
+        cy.route(/api\/core\/term\/snomed\?/, fixtures).as('search');
+
+        // api/modules/rup/prestaciones/huds
+        cy.route('GET', '/api/modules/rup/prestaciones/huds/**', []).as('huds');
+        cy.route('GET', '**api/core/tm/tiposPrestaciones**').as('prestaciones');
+        cy.route('POST', '**/api/modules/rup/prestaciones').as('create');
+        cy.route('GET', '/api/modules/obraSocial/os/**', []).as('obraSocial');
+        cy.route('GET', '/api/modules/obraSocial/puco/**', []).as('version');
+        cy.route('PATCH', 'api/modules/rup/prestaciones/**').as('patch');
+        cy.route('GET', '**api/core/term/snomed/map**').as('map');
+
+        cy.plexButton('PACIENTE FUERA DE AGENDA').click();
+
+
+        cy.plexSelectAsync('name="nombrePrestacion"', 'consulta de medicina general', '@prestaciones', 0);
+        cy.plexButton('SELECCIONAR PACIENTE').click();
+
+        // cy.get('plex-text input').first().type('3399661');
+        cy.plexText('name="buscador"', '3399661');
+
+        cy.get('table tbody tr').first().click();
+
+        cy.plexButton('INICIAR PRESTACIÓN').click();
+
+        cy.wait('@create').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+            expect(xhr.response.body.solicitud.turno).to.be.undefined;
+            expect(xhr.response.body.solicitud.tipoPrestacion.id).to.be.eq('598ca8375adc68e2a0c121b8');
+            expect(xhr.response.body.paciente.documento).to.be.eq('3399661');
+            expect(xhr.response.body.estados[0].tipo).to.be.eq('ejecucion');
+        });
+
+        cy.wait(2020);
+        cy.plexButtonIcon('chevron-up').first().click();
+        cy.plexText('name="searchTerm"', 'botulismo');
+        cy.wait('@search').then((xhr) => {
+            cy.get('.mdi-plus').first().click();
+        });
+
+
+        cy.plexButton('Guardar consulta de medicina general').click();
+        cy.get('button').contains('CONFIRMAR').click();
+
+        // cy.wait('@map').then((xhr) => {
+        // });
+
+
+        cy.wait('@patch').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+            expect(xhr.response.body.solicitud.turno).to.be.undefined;
+            expect(xhr.response.body.solicitud.tipoPrestacion.id).to.be.eq('598ca8375adc68e2a0c121b8');
+            expect(xhr.response.body.paciente.documento).to.be.eq('3399661');
+            expect(xhr.response.body.estados[0].tipo).to.be.eq('ejecucion');
+            expect(xhr.response.body.estados[1]).to.be.eq(undefined);
+        });
+
+        cy.toast('success');
+        // cy.plexButton('Validar consulta de medicina general').click();
+
+        cy.plexRadio('label="Es primera Vez?"');
+
+        // Popup alert
+        cy.get('button').contains('CONFIRMAR').click();
+
+        cy.wait('@patch').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+            expect(xhr.response.body.solicitud.turno).to.be.undefined;
+            expect(xhr.response.body.solicitud.tipoPrestacion.id).to.be.eq('598ca8375adc68e2a0c121b8');
+            expect(xhr.response.body.paciente.documento).to.be.eq('3399661');
+            expect(xhr.response.body.estados[1].tipo).to.be.eq('validada');
+            expect(xhr.response.body.estados[2]).to.be.eq(undefined);
+        });
+
+    });
+
+    it.skip('Iniciar prestación - Fuera de agenda', () => {
         cy.goto('/rup', token);
 
         cy.server();
@@ -52,6 +140,8 @@ context('RUP - Punto de inicio', () => {
             expect(xhr.response.body.paciente.documento).to.be.eq('3399661');
             expect(xhr.response.body.estados[0].tipo).to.be.eq('ejecucion');
         });
+
+        cy.wait(2020);
         cy.plexButtonIcon('chevron-up').first().click();
         cy.plexText('name="searchTerm"', 'fiebre');
         cy.wait('@search').then((xhr) => {
@@ -86,7 +176,7 @@ context('RUP - Punto de inicio', () => {
 
     });
 
-    it('Iniciar prestación - Turno', () => {
+    it.skip('Iniciar prestación - Turno', () => {
         cy.goto('/rup', token);
 
         cy.server();
@@ -159,7 +249,7 @@ context('RUP - Punto de inicio', () => {
         });
     });
 
-    it('Iniciar prestación - Sobreturno', () => {
+    it.skip('Iniciar prestación - Sobreturno', () => {
         cy.goto('/rup', token);
 
         cy.server();

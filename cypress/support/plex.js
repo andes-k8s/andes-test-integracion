@@ -208,6 +208,19 @@ Cypress.Commands.add('plexBool', { prevSubject: 'optional' }, (subject, label, c
     return element;
 });
 
+Cypress.Commands.add('plexRadio', { prevSubject: 'optional' }, (subject, label, checked = false) => {
+    let element;
+    if (subject) {
+        element = cy.wrap(subject).find(`plex-radio[${label}] input[type="radio"]`)
+    } else {
+        element = cy.get(`plex-radio[${label}] input[type="radio"]`);
+    }
+    if (checked !== undefined) {
+        element = element.click({ force: true });
+    }
+    return element;
+});
+
 Cypress.Commands.add('plexTab', { prevSubject: 'optional' }, (subject, label) => {
     let element;
     if (subject) {

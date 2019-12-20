@@ -1,0 +1,161 @@
+[
+
+    {
+        "_id" : "5c35d5f50cf4c715f89868db",
+        "conceptId" : "414531002",
+        "mapGroup" : 1,
+        "mapPriority" : 1,
+        "mapRule" : [
+            true
+        ],
+        "mapAdvice" : "ALWAYS A05.1",
+        "mapTarget" : "A05.1"
+    },
+    {
+        "_id" : "5c35d6030cf4c715f89c54c5",
+        "conceptId" : "414531002",
+        "mapGroup" : 1,
+        "mapPriority" : 1,
+        "mapRule" : [
+            {
+                "concept" : "409564005",
+                "value" : null
+            },
+            {
+                "concept" : "445518008",
+                "value" : {
+                    "op" : "<",
+                    "number" : "1.0",
+                    "unit" : "year"
+                }
+            }
+        ],
+        "mapAdvice" : "IF FOODBORNE BOTULISM, TYPE A AND IF AGE AT ONSET OF CLINICAL FINDING BEFORE 1.0 YEAR CHOOSE A48.51 | MAP OF SOURCE CONCEPT IS CONTEXT DEPENDENT",
+        "mapTarget" : "A48.51"
+    },
+    {
+        "_id" : "5c35d6080cf4c715f89daeb1",
+        "conceptId" : "414531002",
+        "mapGroup" : 1,
+        "mapPriority" : 1,
+        "mapRule" : [
+            true
+        ],
+        "mapAdvice" : "ALWAYS A05.1",
+        "mapTarget" : "A05.1"
+    },
+    {
+        "_id" : "5c35d6080cf4c715f89daeb1",
+        "conceptId" : "414531002",
+        "mapGroup" : 1,
+        "mapPriority" : 1,
+        "mapRule" : [
+            true
+        ],
+        "mapAdvice" : "ALWAYS A05.1",
+        "mapTarget" : "A05.1"
+    },
+    {
+        "_id" : "5c35d5f90cf4c715f899870a",
+        "conceptId" : "414531002",
+        "mapGroup" : 1,
+        "mapPriority" : 2,
+        "mapRule" : [
+            {
+                "concept" : "409564005",
+                "value" : null
+            }
+        ],
+        "mapAdvice" : "IF FOODBORNE BOTULISM, TYPE A CHOOSE A05.1 | MAP OF SOURCE CONCEPT IS CONTEXT DEPENDENT",
+        "mapTarget" : "A05.1"
+    },
+    {
+        "_id" : "5c35d5f10cf4c715f8977794",
+        "conceptId" : "414531002",
+        "mapGroup" : 1,
+        "mapPriority" : 3,
+        "mapRule" : [
+            {
+                "concept" : "398530003",
+                "value" : null
+            }
+        ],
+        "mapAdvice" : "IF WOUND BOTULISM CHOOSE A48.52 | CONSIDER ADDITIONAL CODE TO IDENTIFY SPECIFIC CONDITION OR DISEASE | MAP OF SOURCE CONCEPT IS CONTEXT DEPENDENT",
+        "mapTarget" : "A48.52"
+    },
+    {
+        "_id" : "5c35d5f90cf4c715f8998638",
+        "conceptId" : "414531002",
+        "mapGroup" : 1,
+        "mapPriority" : 4,
+        "mapRule" : [
+            {
+                "concept" : "409562009",
+                "value" : null
+            }
+        ],
+        "mapAdvice" : "IF INHALATIONAL BOTULISM CHOOSE A48.52 | CONSIDER ADDITIONAL CODE TO IDENTIFY SPECIFIC CONDITION OR DISEASE | MAP OF SOURCE CONCEPT IS CONTEXT DEPENDENT",
+        "mapTarget" : "A48.52"
+    },
+    {
+        "_id" : "5c35d5fb0cf4c715f89a2bc9",
+        "conceptId" : "414531002",
+        "mapGroup" : 1,
+        "mapPriority" : 5,
+        "mapRule" : [
+            {
+                "concept" : "409563004",
+                "value" : null
+            },
+            {
+                "concept" : "445518008",
+                "value" : {
+                    "op" : "<",
+                    "number" : "1.0",
+                    "unit" : "year"
+                }
+            }
+        ],
+        "mapAdvice" : "IF INTESTINAL BOTULISM AND IF AGE AT ONSET OF CLINICAL FINDING BEFORE 1.0 YEAR CHOOSE A48.51 | MAP OF SOURCE CONCEPT IS CONTEXT DEPENDENT",
+        "mapTarget" : "A48.51"
+    },
+    {
+        "_id" : "5c35d5f70cf4c715f89929c4",
+        "conceptId" : "414531002",
+        "mapGroup" : 1,
+        "mapPriority" : 6,
+        "mapRule" : [
+            {
+                "concept" : "409563004",
+                "value" : null
+            }
+        ],
+        "mapAdvice" : "IF INTESTINAL BOTULISM CHOOSE A05.1 | MAP OF SOURCE CONCEPT IS CONTEXT DEPENDENT",
+        "mapTarget" : "A05.1"
+    },
+    {
+        "_id" : "5c35d6060cf4c715f89d5fb3",
+        "conceptId" : "414531002",
+        "mapGroup" : 1,
+        "mapPriority" : 7,
+        "mapRule" : [
+            {
+                "concept" : "414488002",
+                "value" : null
+            }
+        ],
+        "mapAdvice" : "IF INFANTILE BOTULISM CHOOSE A48.51 | MAP OF SOURCE CONCEPT IS CONTEXT DEPENDENT",
+        "mapTarget" : "A48.51"
+    },
+    {
+        "_id" : "5c35d5f70cf4c715f898fc46",
+        "conceptId" : "414531002",
+        "mapGroup" : 1,
+        "mapPriority" : 8,
+        "mapRule" : [
+            false
+        ],
+        "mapAdvice" : "ALWAYS A05.1",
+        "mapTarget" : "A05.1"
+    }
+]
