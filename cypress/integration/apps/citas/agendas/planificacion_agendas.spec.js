@@ -98,7 +98,7 @@ context('Planificacion Agendas', () => {
     /**
      * QUEDA PENDIENTE UN TEMA CON EL PLEX-SELECT
      */
-    it.skip('Guardar agenda del día con un solo bloque', () => {
+    it('Guardar agenda del día con un solo bloque', () => {
         complete({
             fecha: cy.today(),
             horaInicio: "10:00",
@@ -533,7 +533,7 @@ context('Planificacion Agendas', () => {
         cy.contains('La cantidad de turnos asignados es mayor a la cantidad disponible');
     });
 
-    it.skip('Guardar agenda del día citando por segmento un valor negativo de pacientes', () => {
+    it('Guardar agenda del día citando por segmento un valor negativo de pacientes', () => {
         complete({
             fecha: cy.today(),
             horaInicio: "10:00",
@@ -558,7 +558,7 @@ context('Planificacion Agendas', () => {
         cy.contains('La cantidad de citas por segmento debe ser mayor a 1');
     });
 
-    it.skip('Guardar agenda con bloques vacíos', () => {
+    it('Guardar agenda con bloques vacíos', () => {
         complete({
             fecha: cy.today(),
             horaInicio: "10:00",
@@ -594,5 +594,22 @@ context('Planificacion Agendas', () => {
 
         cy.contains('Existen bloques incompletos');
     });
+
+    it('crear agenda dinamica en una institucion', () => {
+        cy.swal('cancel');
+        cy.plexDatetime('name="modelo.fecha"', cy.today());
+        cy.plexDatetime('name="modelo.horaInicio"', "08:00");
+        cy.plexDatetime('name="modelo.horaFin"', "16:00");
+        cy.plexSelect('label="Tipos de prestación"').click();
+        cy.plexSelect('label="Tipos de prestación"', '598ca8375adc68e2a0c121b8').click();
+        cy.plexBool('label="Dinámica"', true);
+        cy.plexBool('name="espacioFisicoPropios"', false);
+        cy.plexSelect('label="Seleccione un espacio físico"').click();
+        cy.plexSelectType('label="Seleccione un espacio físico"', 'ESCUELA PRIMARIA 300');
+        cy.plexSelect('label="Seleccione un espacio físico"', '5e1867a942bc01fc3e9a30cd').click();
+        cy.plexButton("Guardar").click();
+        cy.contains('La agenda se guardó correctamente');
+    });
+
 });
 

@@ -118,7 +118,7 @@ describe('CITAS - Planicar Agendas', () => {
         cy.contains(' No hay agendas que contengan turnos que coincidan');
     })
 
-    it.only('suspender agenda disponible con turno y reasignarlo', () => {
+    it('suspender agenda disponible con turno y reasignarlo', () => {
         cy.wait('@getAgendas');
         cy.get('table tbody td').contains('servicio de neumonología').click();
         cy.plexButtonIcon('stop').click();
@@ -159,4 +159,33 @@ describe('CITAS - Planicar Agendas', () => {
         cy.get('.lista-turnos').contains('Turno suspendido (sin paciente)');
 
     })
+
+    it('editar agenda dinamica con institucion', () => {
+        cy.wait('@getAgendas');
+        cy.get('table tbody td').contains('ESCUELA PRIMARIA 300').click();
+        cy.plexButtonIcon('pencil').click();
+        cy.plexSelect('label="Espacio Físico"').click();
+        cy.plexSelect('label="Espacio Físico"').find('.remove-button').click();
+        cy.plexSelectType('label="Espacio Físico"', 'ESCUELA ESPECIAL 14');
+        cy.plexSelect('label="Espacio Físico"', "5e1867a942bc01fc3e9a30e3").click();
+        cy.plexButton("Guardar").click();
+        cy.get('table tbody td').contains('ESCUELA ESPECIAL 14');
+    })
+
+    it('clonar agenda con una institucion asignada', () => {
+        cy.route('POST', '**/api/modules/turnos/agenda/clonar**').as('clonar');
+        cy.wait('@getAgendas');
+        cy.get('table tbody td').contains('ESCUELA ESPECIAL 14').click();
+        cy.plexButtonIcon("content-copy").click();
+        cy.contains(Cypress.moment().add(1, 'days').date()).click()
+        cy.plexButton("Clonar Agenda").click();
+        cy.swal('confirm');
+        cy.wait('@clonar').then((xhr) => {
+            expect(xhr.status).to.be.eq(200)
+        });
+        cy.contains('La Agenda se clonó correctamente');
+        cy.swal('confirm');
+    })
+
+
 })
