@@ -20,7 +20,16 @@ context('turnos', () => {
             onBeforeLoad: (win) => {
                 win.sessionStorage.setItem('jwt', token);
             }
+
         });
+        cy.server();
+        cy.route('GET', '**api/core/tm/paises?**').as('getPaises');
+        cy.route('GET', '**api/core/tm/provincias**').as('getProvincias');
+        cy.route('GET', '**api/core/tm/localidades?provincia**').as('getLocalidades');
+        cy.route('GET', '**api/modules/obraSocial/puco/**').as('getObraSocial');
+        cy.route('GET', '**api/modules/obraSocial/prepagas/**').as('getPrepagas');
+        cy.route('GET', '**api/modules/turnos/historial?pacienteId=**').as('getTurnos');
+        cy.route('GET', '**api/core/mpi/parentescos').as('parentescos')
     })
 
     it('registrar bebé desde punto de Inicio de Turnos', () => {
@@ -34,6 +43,18 @@ context('turnos', () => {
         cy.get('paciente-buscar input').first().type('4659874562');
         cy.get('div').contains('NUEVO PACIENTE').click();
         cy.get('div').contains('BEBÉ').click();
+
+        cy.wait('@parentescos').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        })
+        cy.wait('@getPaises').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+            expect(xhr.response.body.length).not.be.eq(0)
+        })
+        cy.wait('@getProvincias').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+            expect(xhr.response.body.length).not.be.eq(0)
+        })
 
         // Se completa datos básicos
 
@@ -66,6 +87,10 @@ context('turnos', () => {
         cy.wait('@relacionProgenitor').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
             expect(xhr.response.body.relaciones).to.have.length(1)
+            cy.log(validado1.documento)
+            expect(xhr.response.body.documento).to.be.eq(validado1.documento);
+            expect(xhr.response.body.sexo).to.be.eq(validado1.sexo);
+            expect(xhr.response.body.nombre).to.be.eq(validado1.nombre);
         });
 
         // Se espera confirmación de que se agrego nuevo paciente(bebe) correctamente
@@ -151,6 +176,18 @@ context('turnos', () => {
 
         cy.get('div').contains('CON DNI ARGENTINO').click();
 
+        cy.wait('@parentescos').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        })
+        cy.wait('@getPaises').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+            expect(xhr.response.body.length).not.be.eq(0)
+        })
+        cy.wait('@getProvincias').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+            expect(xhr.response.body.length).not.be.eq(0)
+        })
+
         // Se completa datos básicos
         cy.plexInt('name="documento"').type('79546213');
 
@@ -202,22 +239,49 @@ context('turnos', () => {
         // cy.get('paciente-buscar input').first().type('36425896');
         cy.plexText('name="buscador"', validado1.documento);
 
-        cy.wait('@consultaPaciente').then(() => {
+        cy.wait('@consultaPaciente').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
             cy.get('table tbody').contains(validado1.documento).click();
         });
 
+        cy.wait('@getPaises').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        })
+        cy.wait('@getProvincias').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        })
+        cy.wait('@getLocalidades').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        })
+        cy.wait('@getTurnos').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        })
+        cy.wait('@getObraSocial').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        })
+        cy.wait('@getPrepagas').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        })
+
         cy.plexButtonIcon('calendar-plus').click();
 
-        cy.wait('@getCarpetas');
-        cy.wait('@getPrestaciones');
+        cy.wait('@getCarpetas').then(xhr => {
+            expect(xhr.status).to.be.eq(200);
+        });
+        cy.wait('@getPrestaciones').then(xhr => {
+            expect(xhr.status).to.be.eq(200);
+        });
 
         cy.plexSelectAsync('placeholder="Tipos de Prestación"', 'consulta con médico general', '@getPrestaciones', 0);
 
-        cy.wait('@getAgendas');
+        cy.wait('@getAgendas').then(xhr => {
+            expect(xhr.status).to.be.eq(200);
+        });
 
         cy.plexSelectAsync('placeholder="Equipo de Salud"', 'CORTES JAZMIN', '@getProfesional', 0);
 
-        cy.wait('@getAgendas').then(() => {
+        cy.wait('@getAgendas').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
             cy.get('app-calendario .dia').contains(Cypress.moment().date()).click();
         });
 

@@ -20,14 +20,22 @@ context('CITAS - punto de inicio', () => {
         cy.route('GET', '**api/core/tm/tiposPrestaciones**').as('prestaciones');
         cy.route('GET', '**/api/modules/turnos/agenda?rango=true&desde=**').as('cargaAgendas');
         cy.route('PATCH', '**/api/modules/turnos/turno/**').as('darTurno');
+        cy.route('GET', '**api/modules/turnos/historial?pacienteId=**').as('getTurnos');
         cy.route('GET', '**/api/modules/turnos/agenda/**').as('seleccionAgenda');
         cy.route('GET', '**/api/core/tm/profesionales**').as('getProfesionales');
+        cy.route('GET', '**api/modules/obraSocial/puco/**').as('getObraSocial');
+        cy.route('GET', '**api/modules/obraSocial/prepagas/**').as('getPrepagas');
+        cy.route('GET', '**api/core/tm/paises?**').as('getPaises');
+        cy.route('GET', '**api/core/tm/provincias**').as('getProvincias');
+        cy.route('GET', '**api/core/tm/localidades?provincia**').as('getLocalidades');
     })
 
 
     it('Buscar agenda por prestación (0 resultados)', () => {
         darTurno(pacientes[0]);
-        cy.wait('@prestaciones');
+        cy.wait('@prestaciones').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        });
         cy.plexSelectAsync('name="tipoPrestacion"', 'Consulta de adolescencia', '@prestaciones', 0);
         cy.wait('@cargaAgendas').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
@@ -38,8 +46,11 @@ context('CITAS - punto de inicio', () => {
 
     it('Buscar agenda por prestación (2 resultados)', () => {
         darTurno(pacientes[0]);
-        cy.wait('@prestaciones');
+        cy.wait('@prestaciones').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        });
         cy.plexSelectAsync('name="tipoPrestacion"', 'consulta con médico oftalmólogo', '@prestaciones', 0);
+        cy.wait(10000);
         cy.wait('@cargaAgendas').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
             expect(xhr.response.body).to.have.length(2);
@@ -49,7 +60,9 @@ context('CITAS - punto de inicio', () => {
 
     it('Buscar agenda por profesional (0 resultados)', () => {
         darTurno(pacientes[0]);
-        cy.wait('@prestaciones');
+        cy.wait('@prestaciones').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        });
         cy.plexSelectAsync('name="profesional"', 'PRUEBA ALICIA', '@getProfesionales', 0);
 
         cy.wait('@cargaAgendas').then((xhr) => {
@@ -60,11 +73,15 @@ context('CITAS - punto de inicio', () => {
 
     it('Buscar agenda por profesional (1 resultados)', () => {
         darTurno(pacientes[0]);
-        cy.wait('@prestaciones');
+        cy.wait('@prestaciones').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        });
         cy.plexSelectAsync('name="profesional"', 'HUENCHUMAN NATALIA', '@getProfesionales', 0);
         cy.wait('@cargaAgendas').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
             expect(xhr.response.body).to.have.length(1);
+            expect(xhr.response.body[0].profesionales[0].apellido).to.be.eq('HUENCHUMAN');
+            expect(xhr.response.body[0].profesionales[0].nombre).to.be.eq('NATALIA VANESA');
         });
     });
 
@@ -73,17 +90,21 @@ context('CITAS - punto de inicio', () => {
             const paciente = pacientes[i];
             darTurno(paciente);
 
-            cy.wait('@prestaciones');
+            cy.wait('@prestaciones').then((xhr) => {
+                expect(xhr.status).to.be.eq(200);
+            });
             cy.plexSelectAsync('name="tipoPrestacion"', 'consulta con médico oftalmólogo', '@prestaciones', 0);
             cy.wait('@cargaAgendas').then((xhr) => {
                 expect(xhr.status).to.be.eq(200);
-                expect(xhr.response.body).to.have.length(2);
+                expect(xhr.response.body[0].tipoPrestaciones[0].term).to.be.eq('consulta con médico oftalmólogo');
+                expect(xhr.response.body[1].tipoPrestaciones[0].term).to.be.eq('consulta con médico oftalmólogo');
 
             });
             cy.plexSelectAsync('name="profesional"', 'HUENCHUMAN NATALIA', '@getProfesionales', 0);
             cy.wait('@cargaAgendas').then((xhr) => {
                 expect(xhr.status).to.be.eq(200);
-                expect(xhr.response.body).to.have.length(1);
+                expect(xhr.response.body[0].profesionales[0].apellido).to.be.eq('HUENCHUMAN');
+                expect(xhr.response.body[0].profesionales[0].nombre).to.be.eq('NATALIA VANESA');
             });
 
             if (Cypress.moment().add(1, 'days').month() > Cypress.moment().month()) {
@@ -110,17 +131,27 @@ context('CITAS - punto de inicio', () => {
             });
         });
 
+        //------------------------------------------------
+
         it('dar turno agenda dinámica - paciente ' + type, () => {
             const paciente = pacientes[i];
             darTurno(paciente);
 
-            cy.wait('@prestaciones');
+            cy.wait('@prestaciones').then((xhr) => {
+                expect(xhr.status).to.be.eq(200);
+            });
 
             cy.plexSelectAsync('name="tipoPrestacion"', 'consulta con médico oftalmólogo', '@prestaciones', 0);
-            cy.wait('@cargaAgendas');
+            cy.wait('@cargaAgendas').then((xhr) => {
+                expect(xhr.status).to.be.eq(200);
+                expect(xhr.response.body).to.have.length(2);
+                expect(xhr.response.body[0].tipoPrestaciones[0].term).to.be.eq('consulta con médico oftalmólogo');
+                expect(xhr.response.body[1].tipoPrestaciones[0].term).to.be.eq('consulta con médico oftalmólogo');
+            });
             cy.get('app-calendario .dia').contains(Cypress.moment().date()).click();
             cy.wait('@seleccionAgenda').then((xhr) => {
-                expect(xhr.status).to.be.eq(200)
+                expect(xhr.status).to.be.eq(200);
+                expect(xhr.response.body.tipoPrestaciones[0].term).to.be.eq('consulta con médico oftalmólogo');
             });
             // cy.get('plex-button[label="Dar Turno"]').click();
             cy.plexButton('Dar Turno').click();
@@ -128,11 +159,11 @@ context('CITAS - punto de inicio', () => {
             // Confirmo que se dio el turno desde la API
             cy.wait('@darTurno').then((xhr) => {
                 expect(xhr.status).to.be.eq(200)
+                expect(xhr.response.body.tipoPrestaciones[0].term).to.be.eq('consulta con médico oftalmólogo');
+
             });
         });
-
     })
-
 });
 
 function darTurno(paciente) {
@@ -145,6 +176,29 @@ function darTurno(paciente) {
         expect(xhr.status).to.be.eq(200);
     });
     cy.get('paciente-listado table').find('td').contains(searchField).click();
+
+    cy.wait('@getTurnos').then((xhr) => {
+        expect(xhr.status).to.be.eq(200);
+    });
+
+    cy.wait('@getPrepagas').then((xhr) => {
+        expect(xhr.status).to.be.eq(200);
+    });
+
+    cy.wait('@getPaises').then((xhr) => {
+        expect(xhr.status).to.be.eq(200);
+    });
+
+    cy.wait('@getProvincias').then((xhr) => {
+        expect(xhr.status).to.be.eq(200);
+        expect(xhr.response.body.length).not.be.eq(0)
+    });
+
+    cy.wait('@getLocalidades').then((xhr) => {
+        expect(xhr.status).to.be.eq(200);
+        expect(xhr.response.body.length).not.be.eq(0)
+    });
+
     cy.wait('@seleccionPaciente').then((xhr) => {
         expect(xhr.status).to.be.eq(200);
     });
