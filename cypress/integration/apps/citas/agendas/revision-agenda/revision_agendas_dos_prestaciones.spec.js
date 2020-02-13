@@ -1,7 +1,5 @@
 /// <reference types="Cypress" />
 
-// import { buscarPaciente } from './revision_agendas.spec';
-
 context('CITAS - Revisión de Agendas', () => {
     let token;
     let horaInicio;
@@ -26,7 +24,7 @@ context('CITAS - Revisión de Agendas', () => {
         }).then((xhr) => {
             idAgenda = xhr.body.id;
             idBloque = xhr.body.bloques[0].id;
-            idTurno = xhr.body.bloques[0].turnos[1].id;
+            idTurno = xhr.body.bloques[0].turnos[0].id;
             horaInicio = xhr.body.horaInicio;
             tipoPrestacion1 = xhr.body.tipoPrestaciones[0];
             tipoPrestacion2 = xhr.body.tipoPrestaciones[1];
@@ -34,17 +32,43 @@ context('CITAS - Revisión de Agendas', () => {
     });
 
 
-    it.skip('Se selecciona la primera de dos prestaciones, luego se cambia por la segunda', () => {
+    it('Se selecciona la primera de dos prestaciones, luego se cambia por la segunda', () => {
+        cy.server();
+        cy.route('GET', '**/api/modules/turnos/agenda/**').as('agenda');
+        cy.route('GET', '**/api/core/mpi/pacientes/**').as('paciente');
+        cy.route('PUT', '**/api/modules/turnos/turno/*/bloque/*/agenda/*').as('asistencia');
+        cy.route('PATCH', '**/api/modules/turnos/agenda/*').as('estadoAgenda');
+
         cy.goto(`/citas/revision_agenda/${idAgenda}`, token);
         cy.get('tbody:nth-child(1) tr:nth-child(3)').click();
 
         cy.buscarPaciente(pacienteDoc, false);
 
+        cy.wait('@agenda').then(xhrAgenda => {
+            cy.expect(xhrAgenda.status).to.be.eq(200);
+            const turnoAgenda = xhrAgenda.response.body.bloques.find(x => x.id === idBloque).turnos.find(y => y.id === idTurno);
+            cy.wait('@paciente').then(xhrPaciente => {
+                cy.log(xhrPaciente);
+                cy.expect(xhrPaciente.status).to.be.eq(200);
+                cy.expect(xhrPaciente.response.body.id).to.be.eq(turnoAgenda.paciente.id);
+            });
+        });
+
         // El <plex-select> no está armado con label
         cy.plexSelectType('name="tipoPrestacionTurno"').click().get('.option').contains(tipoPrestacion1.term).click();
-        cy.wait(1000);
         cy.plexSelectType('name="tipoPrestacionTurno"').click().get('.option').contains(tipoPrestacion2.term).click();
         cy.plexSelectType('label="Asistencia"', 'Asistio');
+
+        cy.wait('@asistencia').then(xhrAsistencia => {
+            cy.expect(xhrAsistencia.status).to.be.eq(200);
+            const turnoAgenda = xhrAsistencia.response.body.bloques.find(x => x.id === idBloque).turnos.find(y => y.id === idTurno);
+            cy.expect(turnoAgenda.asistencia).to.be.eq(xhrAsistencia.request.body.turno.asistencia);
+        });
+
+        cy.wait('@estadoAgenda').then(xhrEstadoAgenda => {
+            cy.expect(xhrEstadoAgenda.status).to.be.eq(200);
+            cy.expect(xhrEstadoAgenda.response.body.estado).to.be.eq(xhrEstadoAgenda.request.body.estado);
+        });
 
     });
 
