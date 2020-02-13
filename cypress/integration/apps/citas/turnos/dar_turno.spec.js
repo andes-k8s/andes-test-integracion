@@ -27,7 +27,9 @@ context('CITAS - punto de inicio', () => {
 
     it('Buscar agenda por prestación (0 resultados)', () => {
         darTurno(pacientes[0]);
-        cy.wait('@prestaciones');
+        cy.wait('@prestaciones').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        });
         cy.plexSelectAsync('name="tipoPrestacion"', 'Consulta de adolescencia', '@prestaciones', 0);
         cy.wait('@cargaAgendas').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
@@ -38,18 +40,35 @@ context('CITAS - punto de inicio', () => {
 
     it('Buscar agenda por prestación (2 resultados)', () => {
         darTurno(pacientes[0]);
-        cy.wait('@prestaciones');
-        cy.plexSelectAsync('name="tipoPrestacion"', 'consulta con médico oftalmólogo', '@prestaciones', 0);
-        cy.wait('@cargaAgendas').then((xhr) => {
+        cy.wait('@prestaciones').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
-            expect(xhr.response.body).to.have.length(2);
         });
+        cy.plexSelectAsync('name="tipoPrestacion"', 'consulta con médico oftalmólogo', '@prestaciones', 0);
+
+        if (Cypress.moment().add(1, 'days').format('M') > Cypress.moment().format('M')) {
+            cy.wait('@cargaAgendas').then((xhr) => {
+                expect(xhr.status).to.be.eq(200);
+                expect(xhr.response.body).to.have.length(1);
+            });
+            cy.plexButtonIcon('chevron-right').click();
+            cy.wait('@cargaAgendas').then((xhr) => {
+                expect(xhr.status).to.be.eq(200);
+                expect(xhr.response.body).to.have.length(2);
+            });
+        } else {
+            cy.wait('@cargaAgendas').then((xhr) => {
+                expect(xhr.status).to.be.eq(200);
+                expect(xhr.response.body).to.have.length(2);
+            });
+        }
     });
 
 
     it('Buscar agenda por profesional (0 resultados)', () => {
         darTurno(pacientes[0]);
-        cy.wait('@prestaciones');
+        cy.wait('@prestaciones').then((xhr) => {
+            expect(xhr.status).to.be.eq(200);
+        });
         cy.plexSelectAsync('name="profesional"', 'PRUEBA ALICIA', '@getProfesionales', 0);
 
         cy.wait('@cargaAgendas').then((xhr) => {
@@ -60,12 +79,27 @@ context('CITAS - punto de inicio', () => {
 
     it('Buscar agenda por profesional (1 resultados)', () => {
         darTurno(pacientes[0]);
-        cy.wait('@prestaciones');
-        cy.plexSelectAsync('name="profesional"', 'HUENCHUMAN NATALIA', '@getProfesionales', 0);
-        cy.wait('@cargaAgendas').then((xhr) => {
+        cy.wait('@prestaciones').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
-            expect(xhr.response.body).to.have.length(1);
         });
+        cy.plexSelectAsync('name="profesional"', 'HUENCHUMAN NATALIA', '@getProfesionales', 0);
+
+        if (Cypress.moment().add(1, 'days').format('M') > Cypress.moment().format('M')) {
+            cy.wait('@cargaAgendas').then((xhr) => {
+                expect(xhr.status).to.be.eq(200);
+                expect(xhr.response.body).to.have.length(0);
+            });
+            cy.plexButtonIcon('chevron-right').click();
+            cy.wait('@cargaAgendas').then((xhr) => {
+                expect(xhr.status).to.be.eq(200);
+                expect(xhr.response.body).to.have.length(1);
+            });
+        } else {
+            cy.wait('@cargaAgendas').then((xhr) => {
+                expect(xhr.status).to.be.eq(200);
+                expect(xhr.response.body).to.have.length(1);
+            });
+        }
     });
 
     ['validado', 'temporal', 'sin-documento'].forEach((type, i) => {
@@ -75,22 +109,61 @@ context('CITAS - punto de inicio', () => {
 
             cy.wait('@prestaciones');
             cy.plexSelectAsync('name="tipoPrestacion"', 'consulta con médico oftalmólogo', '@prestaciones', 0);
-            cy.wait('@cargaAgendas').then((xhr) => {
-                expect(xhr.status).to.be.eq(200);
-                expect(xhr.response.body).to.have.length(2);
 
-            });
-            cy.plexSelectAsync('name="profesional"', 'HUENCHUMAN NATALIA', '@getProfesionales', 0);
-            cy.wait('@cargaAgendas').then((xhr) => {
-                expect(xhr.status).to.be.eq(200);
-                expect(xhr.response.body).to.have.length(1);
-            });
-
-            if (Cypress.moment().add(1, 'days').month() > Cypress.moment().month()) {
-                cy.plexButton('chevron-right').click();
+            if (Cypress.moment().add(1, 'days').format('M') > Cypress.moment().format('M')) {
+                cy.wait('@cargaAgendas').then((xhr) => {
+                    expect(xhr.status).to.be.eq(200);
+                    expect(xhr.response.body).to.have.length(1);
+                });
+                cy.plexButtonIcon('chevron-right').click();
+                cy.wait('@cargaAgendas').then((xhr) => {
+                    expect(xhr.status).to.be.eq(200);
+                    expect(xhr.response.body).to.have.length(2);
+                });
+                cy.plexButtonIcon('chevron-left').click();
+                cy.wait('@cargaAgendas').then((xhr) => {
+                    expect(xhr.status).to.be.eq(200);
+                    expect(xhr.response.body).to.have.length(1);
+                });
+            } else {
+                cy.wait('@cargaAgendas').then((xhr) => {
+                    expect(xhr.status).to.be.eq(200);
+                    expect(xhr.response.body).to.have.length(2);
+                });
             }
 
-            cy.get('div[class="dia"]').contains(Cypress.moment().add(1, 'days').format('D')).click();
+            cy.plexSelectAsync('name="profesional"', 'HUENCHUMAN NATALIA', '@getProfesionales', 0);
+
+            if (Cypress.moment().add(1, 'days').format('M') > Cypress.moment().format('M')) {
+                cy.wait('@cargaAgendas').then((xhr) => {
+                    expect(xhr.status).to.be.eq(200);
+                    cy.log('prueba1', xhr.response.body);
+                    expect(xhr.response.body).to.have.length(0);
+                });
+                cy.plexButtonIcon('chevron-right').click();
+                cy.wait('@cargaAgendas').then((xhr) => {
+                    expect(xhr.status).to.be.eq(200);
+                    cy.log('prueba2', xhr.response.body);
+                    expect(xhr.response.body).to.have.length(1);
+                });
+                cy.plexButtonIcon('chevron-left').click();
+                cy.wait('@cargaAgendas').then((xhr) => {
+                    expect(xhr.status).to.be.eq(200);
+                    cy.log('prueba3', xhr.response.body);
+                    expect(xhr.response.body).to.have.length(0);
+                });
+            } else {
+                cy.wait('@cargaAgendas').then((xhr) => {
+                    expect(xhr.status).to.be.eq(200);
+                    expect(xhr.response.body).to.have.length.of.at.least(0);
+                });
+            }
+
+            if (Cypress.moment().add(1, 'days').format('M') > Cypress.moment().format('M')) {
+                cy.plexButtonIcon('chevron-right').click();
+            }
+
+            cy.get('div[class="dia"]').contains(Cypress.moment().add(1, 'days').format('D')).click({ force: true });
 
             cy.wait('@seleccionAgenda').then((xhr) => {
                 expect(xhr.status).to.be.eq(200)
@@ -108,6 +181,7 @@ context('CITAS - punto de inicio', () => {
             cy.wait('@darTurno').then((xhr) => {
                 expect(xhr.status).to.be.eq(200)
             });
+            cy.toast('info', 'El turno se asignó correctamente');
         });
 
         it('dar turno agenda dinámica - paciente ' + type, () => {
@@ -158,9 +232,9 @@ function darTurno(paciente) {
 
     cy.plexText('name="buscador"', searchField);
 
-    cy.wait('@busquedaPaciente').then((xhr) => {
-        expect(xhr.status).to.be.eq(200);
-    });
+    // cy.wait('@busquedaPaciente').then((xhr) => {
+    //     expect(xhr.status).to.be.eq(200);
+    // });
     cy.get('paciente-listado table').find('td').contains(searchField).click();
     cy.wait('@seleccionPaciente').then((xhr) => {
         expect(xhr.status).to.be.eq(200);
