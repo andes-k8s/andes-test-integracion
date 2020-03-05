@@ -13,7 +13,7 @@
     },
     "createdAt" : "2019-09-28T18:22:35.299Z",
     "horaInicio" : "2019-09-29T12:00:00.000Z",
-    "horaFin" : "2019-09-29T14:00:00.000Z",
+    "horaFin" : "2019-09-29T12:30:00.000Z",
     "organizacion" : {
         "nombre" : "HOSPITAL PROVINCIAL NEUQUEN - DR. EDUARDO CASTRO RENDON",
         "_id" : "57e9670e52df311059bc8964"
@@ -21,9 +21,9 @@
     "sobreturnos" : [],
     "bloques" : [ 
         {
-            "cantidadTurnos" : 8,
+            "cantidadTurnos" : 3,
             "horaInicio" : "2019-09-29T12:00:00.000Z",
-            "horaFin" : "2019-09-29T14:00:00.000Z",
+            "horaFin" : "2019-09-29T12:30:00.000Z",
             "duracionTurno" : 15,
             "cantidadSimultaneos" : null,
             "cantidadBloque" : null,
@@ -47,43 +47,13 @@
                     "_id" : "5955016e81ac784c129a3769",
                     "diagnosticoSecundario" : [],
                     "estado" : "disponible"
-                }, 
-                {
-                    "horaInicio" : "2019-09-29T12:45:00.000Z",
-                    "_id" : "5955016e81ac784c129a3768",
-                    "diagnosticoSecundario" : [],
-                    "estado" : "disponible"
-                }, 
-                {
-                    "horaInicio" : "2019-09-29T13:00:00.000Z",
-                    "_id" : "5955016e81ac784c129a3767",
-                    "diagnosticoSecundario" : [],
-                    "estado" : "disponible"
-                }, 
-                {
-                    "horaInicio" : "2019-09-29T13:15:00.000Z",
-                    "_id" : "5955016e81ac784c129a3766",
-                    "diagnosticoSecundario" : [],
-                    "estado" : "disponible"
-                }, 
-                {
-                    "horaInicio" : "2019-09-29T13:30:00.000Z",
-                    "_id" : "5955016e81ac784c129a3765",
-                    "diagnosticoSecundario" : [],
-                    "estado" : "disponible"
-                }, 
-                {
-                    "horaInicio" : "2019-09-29T13:45:00.000Z",
-                    "_id" : "5955016e81ac784c129a3764",
-                    "diagnosticoSecundario" : [],
-                    "estado" : "disponible"
                 }
             ],
             "citarPorBloque" : false,
             "pacienteSimultaneos" : false,
             "reservadoProfesional" : 0,
             "reservadoGestion" : 0,
-            "accesoDirectoProgramado" : 8,
+            "accesoDirectoProgramado" : 3,
             "accesoDirectoDelDia" : 0,
             "tipoPrestaciones": [{
                 "_id": "598ca8375adc68e2a0c121b8",
@@ -94,7 +64,7 @@
                 "id": "598ca8375adc68e2a0c121b8"
             }],
             "restantesDelDia" : 0,
-            "restantesProgramados" : 8.0,
+            "restantesProgramados" : 3.0,
             "restantesGestion" : 0.0,
             "restantesProfesional" : 0.0
         }

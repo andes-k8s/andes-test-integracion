@@ -54,7 +54,6 @@ context('CITAS - Revisión de Agendas', () => {
             });
 
             cy.wait('@putTurno').then(xhrTurno => {
-                // cy.log(xhrTurno.response.body);
                 const turnoAgendaNoAsistio = xhrTurno.response.body.bloques.find(x => x.id === idBloque).turnos.find(y => y.id === idTurno);
 
                 cy.expect(xhrTurno.status).to.be.eq(200);
@@ -67,7 +66,7 @@ context('CITAS - Revisión de Agendas', () => {
 
     });
 
-    it('Se reestablece diagnóstico', () => {
+    it.only('Se reestablece diagnóstico', () => {
         cy.server();
         cy.route('GET', '**/api/core/term/cie10**').as('diagnosticos');
         cy.route('PUT', '**/api/modules/turnos/turno/*/bloque/*/agenda/**').as('putTurno');

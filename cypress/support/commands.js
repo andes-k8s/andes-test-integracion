@@ -100,5 +100,7 @@ Cypress.Commands.add('buscarPaciente', (pacienteDoc, cambiarPaciente = true) => 
     }
 });
 
-
-
+// Random de 0 a length
+Cypress.Commands.add('random', (length) => {
+    return Math.floor(Math.random(0, length) * length);
+});
