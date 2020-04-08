@@ -20,6 +20,7 @@ const { createElementoRup, deleteElementoRup } = require('./seed-elementos-rup')
 const { createMaquinaEstados, createCama, createEstadosCama, factoryInternacion } = require('./seed-internacion');
 const { createPacienteApp } = require('./seed-paciente-app');
 const { seedPerfil, seedUsuario } = require('./seed-gestor-usuarios');
+const { createWebhookLog } = require('./seed-webhook-log');
 
 module.exports = (on, config) => {
     // ref: https://docs.cypress.io/api/plugins/browser-launch-api.html#Usage
@@ -77,6 +78,11 @@ module.exports = (on, config) => {
         },
         'database:create:perfil': (dto) => {
             return seedPerfil(mongoUri, dto);
+        },
+        'database:create:usuario': (dto) => {
+            return seedUsuario(mongoUri, dto);
+        'database:create:webhook-log': (params = {}) => {
+            return createWebhookLog(mongoUri, params);
         }
     });
 
