@@ -12,6 +12,7 @@ pipeline {
         api_build = "${API_BUILD}"
         matriculaciones_build = "${MATRICULACIONES_BUILD}"
         monitoreo_build = "${MONITOREO_BUILD}"
+        build_number = "${BUILD_NUMBER}"
     }
     stages {
         stage('Build images') {
@@ -79,7 +80,7 @@ pipeline {
                 docker {
                     image 'cypress/base:10'
                     reuseNode true
-                    args '--ipc=host'
+                    args '--ipc=host --network docker_default'
                 }
             }
             environment {
@@ -88,9 +89,14 @@ pipeline {
             steps {
                 sh 'npm ci'
                 sh 'rm -rf results/* mochawesome-report/* || true'
-                sh 'npx cypress run --env ELASTIC_URI="http://172.16.1.116:9266",MONGO_URI="mongodb://172.16.1.116:27066/andes",API_SERVER="http://172.16.1.116" --config baseUrl=http://172.16.1.116,video=false,numTestsKeptInMemory=1 ${cypressparams} || true' 
+                sh 'npx cypress run --env ELASTIC_URI="http://andes_elastic:9200",MONGO_URI="mongodb://andes_db:27017/andes",API_SERVER="http://andes_nginx" --config baseUrl=http://andes_nginx,video=false,numTestsKeptInMemory=1 ${cypressparams} || true' 
                 sh 'npm run report'
                 sh 'ELASTICSEARCH_HOST=http://elklogger.andes.gob.ar:9201  node scripts/dashboard.js'
+                withCredentials([string(credentialsId: 'GITHUB_PERSONAL_TOKEN', variable: 'TOKEN')]) {
+                    sh 'GITHUB_PERSONAL_TOKEN=$TOKEN node scripts/github.js'
+                }
+               
+                
             }
         }
     }
@@ -99,6 +105,9 @@ pipeline {
             sh 'mkdir -p mochawesome-report/web/assets'
             sh 'mkdir -p cypress/screenshots' 
             sh 'cp -R cypress/screenshots/* mochawesome-report/web/assets || true'
+            sh 'mkdir -p "/var/www/html/$BUILD_NUMBER"'
+            sh 'cp -R mochawesome-report/web/* "/var/www/html/$BUILD_NUMBER"'
+            sh 'chmod -R +777 "/var/www/html/$BUILD_NUMBER"'
             sh 'cd docker'
             sh 'API=$api APP=$app docker-compose -f docker/docker-compose.yml down -v'
             junit 'results/cypress-report-*.xml'

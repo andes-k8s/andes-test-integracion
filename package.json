@@ -17,6 +17,8 @@
     "dev:up": "node scripts/prepare.js develop up",
     "dev:reset": "node scripts/prepare.js develop reset",
     "dev:down": "node scripts/prepare.js develop down",
+    "dev:run": "npx cypress run -c baseUrl=http://localhost:4200 --env ENVIRONMENT=develop,API_SERVER=http://localhost:3002,RETRIES=3",
+    "dev": "npx cypress open -c baseUrl=http://localhost:4200 --env ENVIRONMENT=develop,API_SERVER=http://localhost:3002,RETRIES=0",
     "report": "node scripts/reporter.js"
   },
   "repository": {
@@ -32,8 +34,10 @@
   "devDependencies": {
     "@angular/cli": "^8.3.8",
     "@elastic/elasticsearch": "^6.8.6",
+    "console.table": "^0.10.0",
     "cypress": "^3.3.1",
     "cypress-plugin-retries": "^1.5.2",
+    "globby": "^11.0.0",
     "mocha": "^4.1.0",
     "mocha-junit-reporter": "^1.23.2",
     "mocha-multi-reporters": "^1.1.7",
