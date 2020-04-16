@@ -100,5 +100,53 @@ Cypress.Commands.add('buscarPaciente', (pacienteDoc, cambiarPaciente = true) => 
     }
 });
 
+Cypress.Commands.add('countServer', function () {
+    cy._apiCount = 0;
+    cy.server({
+        onRequest: () => {
+            cy._apiCount++;
+        },
+        onResponse: (xhr) => {
+            /**
+             * Sometimes there are some time windows between API requests, e.g. Request1 finishes,
+             * but Request2 starts after 100ms, in this case, cy.waitUntilAllAPIFinished() would
+             * not work correctly, so when we decrease the counter, we need to have a delay here.
+             */
+            const delayTime = 500;
+            if (cy._apiCount === 1) {
+                setTimeout(() => {
+                    cy._apiCount--;
+                }, delayTime);
+            } else {
+                cy._apiCount--;
+            }
+        },
+        onAbort: () => {
+            const delayTime = 500;
+            if (cy._apiCount === 1) {
+                setTimeout(() => {
+                    cy._apiCount--;
+                }, delayTime);
+            } else {
+                cy._apiCount--;
+            }
+        }
+    })
+})
 
+Cypress.Commands.add('waitUntilAllAPIFinished', () => {
+    /**
+     * If you pass a function as a parameter when calling should(), Cypress will retry that
+     * function continuously within the timeout you provided, until the expectation inside
+     * that function has been met.
+     *
+     * Note: the purpose of get('body') here is just to pass the timeout to the should() call,
+     * basically you can get any element on the page.
+     */
+    const timeout = Cypress.env('apiMaxWaitingTime') || 60 * 1000;
+    cy.log('Waiting for pending API requests:');
+    cy.get('body', { timeout, log: true }).should(() => {
+        expect(cy._apiCount).to.lte(0);
+    });
+});
 

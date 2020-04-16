@@ -18,14 +18,7 @@ context('RUP - Punto de inicio', () => {
     describe('listado de agendas y prestaciones', () => {
 
         beforeEach(() => {
-            cy.server();
-            cy.route('GET', '**/api/modules/turnos/agenda**').as('agendas');
-            cy.route('POST', '**/api/modules/rup/prestaciones**').as('crearPrestacion');
-            cy.route('GET', '**/api/modules/rup/prestaciones**').as('prestaciones');
-            cy.route('GET', '**/api/modules/turnero/pantalla**').as('turnero');
-            cy.route('GET', '**/api/modules/rup/elementosRUP**').as('elementosRUP');
-            cy.route('GET', '**/api/core/tm/tiposPrestaciones**').as('tiposPrestaciones');
-            cy.route('GET', '**api/modules/cde/paciente**').as('paciente');
+            cy.countServer();
             cy.route('GET', '/api/modules/rup/prestaciones/huds/**', []).as('huds');
         });
 
@@ -47,20 +40,19 @@ context('RUP - Punto de inicio', () => {
         });
 
         it('visualizar listados agendas', () => {
+
             cy.task('database:seed:agenda', { pacientes: '586e6e8627d3107fde116cdb' });
             cy.task('database:seed:agenda', { pacientes: '586e6e8627d3107fde116cdb', fecha: -1 });
-            cy.task('database:seed:agenda', { pacientes: '586e6e8627d3107fde116cdb', fecha: -1, inicio: 2, fin: 4 });
+            cy.task('database:seed:agenda', { pacientes: '586e6e8627d3107fde116cdb', fecha: -1, inicio: 1, fin: 1 });
 
             cy.goto('/rup', token);
 
-            cy.wait('@agendas');
+            cy.waitUntilAllAPIFinished();
+
             cy.get('table').first().as('tablaAgendas');
 
             cy.get('@tablaAgendas').find('tbody tr').should('have.length', 1);
-            cy.wait('@prestaciones');
-            cy.wait('@tiposPrestaciones');
-            cy.wait('@turnero');
-            cy.wait(1000);
+
             cy.get('@tablaAgendas').find('tbody tr').find('td div').contains('consulta con médico general');
             cy.get('@tablaAgendas').find('tbody tr').find('td').contains('pacientes');
             cy.get('@tablaAgendas').find('tbody tr').find('td').contains('1');
@@ -68,7 +60,9 @@ context('RUP - Punto de inicio', () => {
 
 
             cy.plexDatetime('name="horaInicio"').find('.mdi-menu-left').click();
-            cy.wait('@agendas');
+
+            cy.waitUntilAllAPIFinished();
+
             cy.get('@tablaAgendas').find('tbody tr').should('have.length', 2);
 
 
