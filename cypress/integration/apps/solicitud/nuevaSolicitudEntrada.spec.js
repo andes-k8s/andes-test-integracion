@@ -2,13 +2,13 @@
 
 function secuencia(token) {
     cy.goto('/solicitudes', token);
-    cy.plexButton("Nueva Solicitud").click();
+    cy.plexButton("Nueva Solicitud").click({ force: true });
 }
 
 function seleccionarPaciente(dni) {
     cy.plexText('name="buscador"', dni);
     cy.wait('@searchPaciente')
-    cy.get('paciente-listado').find('td').contains(dni).click();
+    cy.get('paciente-listado').find('td').contains(dni).click({ force: true });
 }
 
 describe('TOP: Nueva Solicitud de Entrada', () => {
@@ -40,13 +40,13 @@ describe('TOP: Nueva Solicitud de Entrada', () => {
         cy.introjsTooltip();
         cy.plexDatetime('label="Fecha en que el profesional solicitó la prestación"', cy.today());
         cy.plexSelectAsync('label="Tipo de Prestación Solicitada"', 'Consulta de esterilidad', '@tipoPrestacion', '59ee2d9bf00c415246fd3d1c');
-        cy.plexSelect('label="Organización origen"', 0).click();
+        cy.plexSelect('label="Organización origen"', 0).click({ force: true });
         cy.plexSelect('label="Tipos de Prestación Origen"', 0).then((elemento) => {
             idPrestacion = elemento.attr('data-value');
-        }).click();
+        }).click({ force: true });
         cy.plexSelectAsync('label="Profesional solicitante"', 'CORTES JAZMIN', '@profesionalSolicitante', '58f74fd3d03019f919e9fff2');
         cy.plexTextArea('label="Notas / Diagnóstico / Motivo"', 'un motivo lalala');
-        cy.plexButton('Guardar').click();
+        cy.plexButton('Guardar').click({ force: true });
         cy.wait('@createSolicitud').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
             expect(xhr.response.body.paciente.documento).to.be.eq(dni);
@@ -65,7 +65,7 @@ describe('TOP: Nueva Solicitud de Entrada', () => {
         cy.plexSelectAsync('label="Tipo de Prestación Solicitada"', 'Consulta de esterilidad', '@tipoPrestacion', '59ee2d9bf00c415246fd3d1c');
         cy.plexSelectAsync('label="Profesional solicitante"', 'CORTES JAZMIN', '@profesionalSolicitante', '58f74fd3d03019f919e9fff2');
         cy.plexTextArea('label="Notas / Diagnóstico / Motivo"', 'un motivo lalala');
-        cy.plexButton('Guardar').click();
+        cy.plexButton('Guardar').click({ force: true });
         cy.wait('@createSolicitud').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
             expect(xhr.response.body.paciente.documento).to.be.eq(dni);
@@ -77,36 +77,36 @@ describe('TOP: Nueva Solicitud de Entrada', () => {
         seleccionarPaciente(dni);
 
         cy.introjsTooltip();
-        cy.plexButton('Guardar').click();
+        cy.plexButton('Guardar').click({ force: true });
 
         cy.plexDatetime('label="Fecha en que el profesional solicitó la prestación"').validationMessage()
         cy.swal('confirm');
         cy.plexDatetime('label="Fecha en que el profesional solicitó la prestación"', cy.today());
-        cy.plexButton('Guardar').click();
+        cy.plexButton('Guardar').click({ force: true });
         cy.swal('confirm');
 
         cy.plexSelectType('label="Tipo de Prestación Solicitada"').validationMessage()
-        cy.plexButton('Guardar').click();
+        cy.plexButton('Guardar').click({ force: true });
         cy.swal('confirm');
         cy.plexSelectAsync('label="Tipo de Prestación Solicitada"', 'Consulta de esterilidad', '@tipoPrestacion', '59ee2d9bf00c415246fd3d1c');
 
         cy.plexSelectType('label="Organización origen"').validationMessage()
-        cy.plexButton('Guardar').click();
+        cy.plexButton('Guardar').click({ force: true });
         cy.swal('confirm');
-        cy.plexSelect('label="Organización origen"', 0).click();
+        cy.plexSelect('label="Organización origen"', 0).click({ force: true });
 
-        cy.plexSelect('label="Tipos de Prestación Origen"', 0).click();
+        cy.plexSelect('label="Tipos de Prestación Origen"', 0).click({ force: true });
 
         cy.plexSelectType('label="Profesional solicitante"').validationMessage()
-        cy.plexButton('Guardar').click();
+        cy.plexButton('Guardar').click({ force: true });
         cy.swal('confirm');
         cy.plexSelectAsync('label="Profesional solicitante"', 'CORTES JAZMIN', '@profesionalSolicitante', '58f74fd3d03019f919e9fff2');
 
         cy.plexTextArea('label="Notas / Diagnóstico / Motivo"').validationMessage()
-        cy.plexButton('Guardar').click();
+        cy.plexButton('Guardar').click({ force: true });
         cy.swal('confirm');
         cy.plexTextArea('label="Notas / Diagnóstico / Motivo"', 'un motivo lalala');
-        cy.plexButton('Guardar').click();
+        cy.plexButton('Guardar').click({ force: true });
         cy.wait('@createSolicitud').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
         });
@@ -130,34 +130,32 @@ describe('TOP: Nueva Solicitud de Entrada', () => {
         cy.plexSelectType('label="Organización origen"', '{enter}');
         cy.plexSelect('label="Tipos de Prestación Origen"', 0).then((elemento) => {
             idPrestacion = elemento.attr('data-value');
-        }).click();
+        }).click({ force: true });
         cy.plexSelectType('label="Profesional solicitante"', 'CORTES');
         cy.wait('@profesionalSolicitante');
         cy.plexSelectType('label="Profesional solicitante"', '{enter}');
         cy.plexTextArea('label="Notas / Diagnóstico / Motivo"', 'un motivo lalala');
-        cy.plexButton('Guardar').click();
+        cy.plexButton('Guardar').click({ force: true });
         cy.wait('@createSolicitud').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
             expect(xhr.response.body.paciente.documento).to.be.eq(dni);
             expect(xhr.response.body.solicitud.tipoPrestacionOrigen.conceptId).to.be.eq(idPrestacion);
         });
         cy.toast('success');
-        cy.plexButtonIcon('lock-alert').last().click();
-        cy.plexButton('Asignar').click();
+        cy.plexButtonIcon('lock-alert').last().click({ force: true });
+        cy.plexButton('Asignar').click({ force: true });
         cy.plexTextArea('label="Observaciones"', 'un motivo lalala');
         cy.plexSelectType('label="Profesional"', 'natalia huenchuman');
         cy.wait('@profesionalSolicitante');
         cy.plexSelectType('label="Profesional"', '{enter}');
-        cy.plexButton('Confirmar').click();
-        cy.wait('@getSolicitudes').then((xhr) => {
-            expect(xhr.status).to.be.eq(200);
-        });
+        cy.plexButton('Confirmar').click({ force: true });
+        cy.wait('@getSolicitudes')
         cy.wait('@patchSolicitud');
         cy.wait('@getSolicitudes');
         cy.get('.badge').contains('asignada');
         cy.goto('/rup', token);
         cy.wait('@tipoPrestacion');
-        cy.plexButton('Mis solicitudes').click();
+        cy.plexButton('Mis solicitudes').click({ force: true });
         cy.wait('@getSolicitudes.all').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
             cy.get('.badge').contains('asignada');
