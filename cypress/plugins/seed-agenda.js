@@ -109,8 +109,15 @@ module.exports.seedAgenda = async (mongoUri, params) => {
         if (params.fin !== undefined) {
             horaFin.add(params.inicio, 'h');
         }
-        agenda.horaInicio = horaInicio.toDate();
-        agenda.horaFin = horaFin.toDate();
+
+        if (horaFin.toDate() > moment().endOf('day').toDate()) {
+            agenda.horaInicio = moment().endOf('day').add(-2, 'h').toDate();
+            agenda.horaFin = moment().endOf('day').add(-1, 'h').toDate();
+        }
+        else {
+            agenda.horaInicio = horaInicio.toDate();
+            agenda.horaFin = horaFin.toDate();
+        }
         agenda.bloques[0]._id = new ObjectId();
         agenda.bloques[0].horaInicio = horaInicio.toDate();
         agenda.bloques[0].horaFin = horaFin.toDate();
