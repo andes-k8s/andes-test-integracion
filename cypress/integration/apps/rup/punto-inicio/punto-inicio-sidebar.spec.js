@@ -63,6 +63,7 @@ context('RUP - Punto de inicio', () => {
             cy.route({ method: 'GET', url: '**api/modules/cde/paciente**' }).as('paciente');
             cy.route({ method: 'GET', url: '/api/modules/rup/prestaciones/huds/**', response: [] }).as('huds');
             cy.route({ method: 'GET', url: '/api/modules/top/reglas**', response: [] }).as('reglas');
+            cy.route('POST', '**/api/modules/huds/accesos/token**').as('tokenHuds');
 
         });
 
@@ -138,6 +139,7 @@ context('RUP - Punto de inicio', () => {
             cy.route({ method: 'GET', url: '**api/modules/cde/paciente**' }).as('paciente');
             cy.route({ method: 'GET', url: '/api/modules/rup/prestaciones/huds/**', response: [] }).as('huds');
             cy.route({ method: 'GET', url: '/api/modules/top/reglas**', response: [] }).as('reglas');
+            cy.route('POST', '**/api/modules/huds/accesos/token**').as('tokenHuds');
 
         });
 
@@ -171,7 +173,9 @@ context('RUP - Punto de inicio', () => {
                     cy.get('table').first().as('tablaAgendas');
                     cy.get('@tablaAgendas').find('tbody tr').eq(1).click();
                     cy.plexButton('CONTINUAR REGISTRO').click();
-
+                    cy.wait('@tokenHuds').then((xhr) => {
+                        expect(xhr.status).to.be.eq(200);
+                    });
 
                     cy.url().should('include', '/rup/ejecucion/');
                     cy.wait('@findPrestacion').then((xhr) => {
@@ -236,6 +240,9 @@ context('RUP - Punto de inicio', () => {
                     cy.contains('Procesos de Auditoría').click({ force: true });
 
                     cy.plexButton('ACEPTAR').click();
+                    cy.wait('@tokenHuds').then((xhr) => {
+                        expect(xhr.status).to.be.eq(200);
+                    });
                     cy.url().should('include', '/rup/vista/');
                 });
 
@@ -319,7 +326,9 @@ context('RUP - Punto de inicio', () => {
                 cy.get('table').first().as('tablaAgendas');
                 cy.get('@tablaAgendas').find('tbody tr').eq(agendaIndex).click();
                 cy.plexButton('CONTINUAR REGISTRO').click();
-
+                cy.wait('@tokenHuds').then((xhr) => {
+                    expect(xhr.status).to.be.eq(200);
+                });
 
                 cy.url().should('include', '/rup/ejecucion/');
                 cy.wait('@findPrestacion').then((xhr) => {
@@ -378,6 +387,10 @@ context('RUP - Punto de inicio', () => {
                     cy.contains('Procesos de Auditoría').click({ force: true });
 
                     cy.plexButton('ACEPTAR').click();
+                    cy.wait('@tokenHuds').then((xhr) => {
+                        expect(xhr.status).to.be.eq(200);
+                    });
+
                     cy.url().should('include', '/rup/vista/');
                 });
             }
