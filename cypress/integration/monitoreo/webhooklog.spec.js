@@ -12,8 +12,8 @@ context('Webhook-logs', () => {
         response: {
             message: 'ok'
         },
-        createdAt: Cypress.moment().date('2019-08-08T11:46:49.466Z'),
-        updatedAt: Cypress.moment().date('2020-03-07T11:46:49.466Z')
+        createdAt: '2019-08-08T11:46:49.466Z',
+        updatedAt: '2020-03-07T11:46:49.466Z'
     }
 
     before(() => {
@@ -60,21 +60,21 @@ context('Webhook-logs', () => {
 
     it('Cargar lista de Webhooklog, con filtro de fecha inicio y fecha fin', () => {
         cy.route('GET', '**/api/modules/webhook/log?*fecha=**').as('busquedaFecha');
-        let hasta = Cypress.moment().format('DD/MM/YYYY hh:mm');
-        let desde = Cypress.moment().date((webhookLog.updatedAt.toDate));
-        cy.plexDatetime('label="Desde"').find('input').type(desde);
-        cy.plexDatetime('name="fechaF"').find('input').type(hasta);
-        cy.log(hasta);
-        cy.wait('@busquedaFecha ').then((xhr) => {
+        let hasta = Cypress.moment(webhookLog.updatedAt).add(1, 'days').format('DD/MM/YYYY  hh:mm');
+        let desde = Cypress.moment(webhookLog.updatedAt).add(-1, 'days').format('DD/MM/YYYY  hh:mm');
+        cy.plexDatetime('label="Desde"', desde);
+        cy.plexDatetime('name="fechaF"', hasta);
+        cy.wait('@busquedaFecha').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
         })
     });
+
     it('Cargar lista de Webhooklog, con filtro de fecha inicio mayor a fecha fin', () => {
         cy.route('GET', '**/api/modules/webhook/log?*fecha=**').as('busquedaFecha');
-        let hasta = Cypress.moment().format('DD/MM/YYYY hh:mm');
-        let desde = Cypress.moment().date((webhookLog.updatedAt.toDate));
-        cy.plexDatetime('label="Desde"').find('input').type(hasta);
-        cy.plexDatetime('name="fechaF"').find('input').type(desde);
+        let hasta = Cypress.moment(webhookLog.updatedAt).add(1, 'days').format('DD/MM/YYYY  hh:mm');
+        let desde = Cypress.moment(webhookLog.updatedAt).add(-1, 'days').format('DD/MM/YYYY  hh:mm');
+        cy.plexDatetime('label="Desde"', hasta)
+        cy.plexDatetime('name="fechaF"', desde);
         cy.contains('La fecha final no puede ser menor a la fecha inicial');
         cy.contains('Aceptar').click();
     });
