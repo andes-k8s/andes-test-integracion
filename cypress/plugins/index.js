@@ -79,8 +79,6 @@ module.exports = (on, config) => {
         'database:create:perfil': (dto) => {
             return seedPerfil(mongoUri, dto);
         },
-        'database:create:usuario': (dto) => {
-            return seedUsuario(mongoUri, dto);
         'database:create:webhook-log': (params = {}) => {
             return createWebhookLog(mongoUri, params);
         }
