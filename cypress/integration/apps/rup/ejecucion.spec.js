@@ -28,7 +28,6 @@ context('RUP - Punto de inicio', () => {
         cy.route('GET', '/api/modules/rup/prestaciones/huds/**', []).as('huds');
         cy.route('GET', '**api/core/tm/tiposPrestaciones**').as('prestaciones');
         cy.route('POST', '**/api/modules/rup/prestaciones').as('create');
-        cy.route('GET', '/api/modules/obraSocial/os/**', []).as('obraSocial');
         cy.route('PATCH', 'api/modules/rup/prestaciones/**').as('patch');
 
         cy.plexButton('PACIENTE FUERA DE AGENDA').click();
@@ -247,7 +246,6 @@ context('RUP - Punto de inicio', () => {
         cy.route('GET', '/api/modules/rup/prestaciones/huds/**', []).as('huds');
         cy.route('GET', '**api/core/tm/tiposPrestaciones**').as('prestaciones');
         cy.route('POST', '**/api/modules/rup/prestaciones').as('create');
-        cy.route('GET', '/api/modules/obraSocial/os/**', []).as('obraSocial');
         cy.route('PATCH', 'api/modules/rup/prestaciones/**').as('patch');
 
         cy.plexButton('PACIENTE FUERA DE AGENDA').click();

@@ -45,7 +45,6 @@ context('punto de inicio', () => {
 
     it('Generar solicitud', () => {
         cy.route('GET', '**api/modules/rup/prestaciones/solicitudes?idPaciente=**').as('generarSolicitudPaciente');
-        cy.route('GET', '/api/modules/obraSocial/obraSocial/**', []).as('version');
         cy.plexText('name=buscador', paciente.documento);
         cy.wait('@busquedaPaciente').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
@@ -67,7 +66,6 @@ context('punto de inicio', () => {
             "account": null
         }).as('clickActivarApp');
 
-        cy.route('GET', '/api/modules/obraSocial/obraSocial/**', []).as('puco');
         cy.route('GET', '/api/modules/obraSocial/prepagas/**', []).as('prepagas');
         cy.plexText('name=buscador', paciente.documento);
         cy.wait('@busquedaPaciente').then((xhr) => {
@@ -85,7 +83,6 @@ context('punto de inicio', () => {
         cy.route('GET', '**/api/core/mpi/pacientes/**').as('getPaciente');
         cy.route('GET', '**/api/modules/turnos/historial?**').as('getHistorial');
         cy.route('GET', '**/api/core/log/paciente?**').as('getLog');
-        cy.route('GET', '**/api/modules/obraSocial/obraSocial/**').as('getObraSocial');
         cy.route('GET', '**/api/modules/obraSocial/prepagas**').as('getPrepagas');
         cy.route('GET', '**/api/core/tm/localidades?**').as('getLocalidades');
         cy.route('GET', '**/api/core/tm/paises?**').as('getPaises');
@@ -111,10 +108,6 @@ context('punto de inicio', () => {
         });
 
         cy.wait('@getLog').then((xhr) => {
-            expect(xhr.status).to.be.eq(200);
-        });
-
-        cy.wait('@getObraSocial').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
         });
 
@@ -159,7 +152,6 @@ context('punto de inicio', () => {
         cy.route('GET', '**/api/core/mpi/pacientes/**').as('getPaciente');
         cy.route('GET', '**/api/modules/turnos/historial?**').as('getTurnos');
         cy.route('GET', '**/api/core/log/paciente?**').as('getLog');
-        cy.route('GET', '**/api/modules/obraSocial/obraSocial/**').as('getObraSocial');
         cy.route('GET', '**/api/core/tm/paises?**').as('getPaises');
         cy.route('GET', '**/api/modules/obraSocial/prepagas**').as('getPrepagas');
         cy.route('GET', '**/api/core/tm/provincias**').as('getProvincias');
@@ -182,10 +174,6 @@ context('punto de inicio', () => {
         });
 
         cy.wait('@getLog').then((xhr) => {
-            expect(xhr.status).to.be.eq(200);
-        });
-
-        cy.wait('@getObraSocial').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
         });
 
@@ -246,7 +234,6 @@ context('punto de inicio', () => {
         cy.route('GET', '**/api/core/mpi/pacientes/**').as('getPaciente');
         cy.route('GET', '**/api/modules/turnos/historial?**').as('getTurnos');
         cy.route('GET', '**/api/core/log/paciente?**').as('getLog');
-        cy.route('GET', '**/api/modules/obraSocial/obraSocial/**').as('getObraSocial');
         cy.route('GET', '**/api/core/tm/paises?**').as('getPaises');
         cy.route('GET', '**/api/modules/obraSocial/prepagas**').as('getPrepagas');
         cy.route('GET', '**/api/core/tm/provincias**').as('getProvincias');
@@ -270,10 +257,6 @@ context('punto de inicio', () => {
         });
 
         cy.wait('@getLog').then((xhr) => {
-            expect(xhr.status).to.be.eq(200);
-        });
-
-        cy.wait('@getObraSocial').then((xhr) => {
             expect(xhr.status).to.be.eq(200);
         });
 
