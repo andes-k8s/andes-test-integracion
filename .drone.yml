@@ -8,9 +8,9 @@ steps:
     image: plugins/downstream
     settings:
       server: 
-        from_secret: ${DRONE_SERVER}
+        from_secret: DRONE_SERVER
       token: 
-        from_secret: ${DRONE_USER_TOKEN}
+        from_secret: DRONE_USER_TOKEN
       fork: true
       repositories:
         - andes-k8s/api
