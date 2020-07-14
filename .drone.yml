@@ -15,7 +15,7 @@ steps:
       repositories:
         - andes-k8s/api
         - andes-k8s/app
-        - andes-k8s/monitoreo
+        - andes-k8s/monitoreo-app
         - andes-k8s/matriculaciones
 
   - name: build_image
