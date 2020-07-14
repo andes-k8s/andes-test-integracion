@@ -1,11 +1,3 @@
-# PARAMS:
-#   - APP_BRANCH
-#   - API_BRANCH
-#   - MATRICULACIONES_BRANCH
-#   - MONITOREO_BRANCH
-#   - TEST_BRANCH
-#   - CRYPRESS_PARAMS
-
 ---
 kind: pipeline
 type: kubernetes
@@ -45,3 +37,13 @@ steps:
     commands:
       - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker/docker-compose.yml down -v
       - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker/docker-compose.yml up -d
+
+
+
+# PARAMS:
+#   - APP_BRANCH
+#   - API_BRANCH
+#   - MATRICULACIONES_BRANCH
+#   - MONITOREO_BRANCH
+#   - TEST_BRANCH
+#   - CRYPRESS_PARAMS
