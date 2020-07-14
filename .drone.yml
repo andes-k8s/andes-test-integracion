@@ -37,8 +37,9 @@ steps:
   - name: start_container
     image: docker:dind
     commands:
-      - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker/docker-compose.yml down -v
-      - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker/docker-compose.yml up -d
+      - cd docker
+      - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker-compose.yml down -v
+      - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker-compose.yml up -d
 
 
 
