@@ -35,8 +35,9 @@ steps:
         - APP=${APP_BRANCH}
         - MATRICULACIONES=${MATRICULACIONES_BRANCH}
       insecure: true
+
   - name: start_container
-    image: docker:dind
+    image: orlandobrea/andes-dind:latest
     commands:
       - cd docker
       - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker-compose.yml down -v
