@@ -1,0 +1,47 @@
+# PARAMS:
+#   - APP_BRANCH
+#   - API_BRANCH
+#   - MATRICULACIONES_BRANCH
+#   - MONITOREO_BRANCH
+#   - TEST_BRANCH
+#   - CRYPRESS_PARAMS
+
+---
+kind: pipeline
+type: kubernetes
+name: default
+
+steps:
+  - name: build_api
+    image: plugins/downstream
+    settings:
+      server: ${DRONE_SERVER}
+      token: ${DRONE_USER_TOKEN}
+      fork: true
+      repositories:
+        - andes-k8s/api
+        - andes-k8s/app
+        - andes-k8s/monitoreo
+        - andes-k8s/matriculaciones
+
+  - name: build_image
+    image: plugins/docker   
+    settings:
+      debug: true
+      username: 
+        from_secret: REGISTRY_USER
+      password:
+        from_secret: REGISTRY_PASSWORD
+      registry: new-docker-registry.192-168-0-8.nip.io:30443
+      repo: new-docker-registry.192-168-0-8.nip.io:30443/andesnqn/nginx
+      dockerfile: docker/andes.Dockerfile
+      tags: ["${DRONE_BRANCH}", "${DRONE_BRANCH}-${DRONE_COMMIT_SHA}"]
+      build_args:
+        - APP=${APP_BRANCH}
+        - MATRICULACIONES=${MATRICULACIONES_BRANCH}
+      insecure: true
+  - name: start_container
+    image: docker:dind
+    commands:
+      - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker/docker-compose.yml down -v
+      - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker/docker-compose.yml up -d
