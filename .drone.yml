@@ -26,8 +26,8 @@ steps:
         from_secret: REGISTRY_USER
       password:
         from_secret: REGISTRY_PASSWORD
-      registry: new-docker-registry.192-168-0-8.nip.io:30443
-      repo: new-docker-registry.192-168-0-8.nip.io:30443/andesnqn/nginx
+      registry: ${DOCKER_REGISTRY_URL}
+      repo: ${DOCKER_REGISTRY_URL}/andesnqn/nginx
       context: docker
       dockerfile: docker/andes.Dockerfile
       tags: ["${DRONE_BRANCH}", "${DRONE_BRANCH}-${DRONE_COMMIT_SHA}"]
@@ -35,7 +35,7 @@ steps:
         - APP=${APP_BRANCH}
         - MATRICULACIONES=${MATRICULACIONES_BRANCH}
       insecure: true
-
+services:
   - name: start_container
     image: orlandobrea/andes-dind:latest
     commands:
@@ -52,3 +52,4 @@ steps:
 #   - MONITOREO_BRANCH
 #   - TEST_BRANCH
 #   - CRYPRESS_PARAMS
+#   - DOCKER_REGISTRY_URL: ex registry.192-168-68-2.nip.io:30443
