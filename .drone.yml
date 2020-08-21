@@ -22,9 +22,13 @@ steps:
     image: orlandobrea/andes-dind:latest
     detach: true
     commands:
+      - echo "step 1"
       - cd docker
+      - echo "step 2"
       - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker-compose.yml down -v
+      - echo "step 2"
       - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker-compose.yml up -d
+      - echo "step 3"
 
   - name: build_image
     image: plugins/docker   
