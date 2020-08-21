@@ -18,6 +18,14 @@ steps:
         - andes-k8s/monitoreo-app
         - andes-k8s/matriculaciones
 
+  - name: start_services
+    image: orlandobrea/andes-dind:latest
+    detach: true
+    commands:
+      - cd docker
+      - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker-compose.yml down -v
+      - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker-compose.yml up -d
+
   - name: build_image
     image: plugins/docker   
     settings:
@@ -35,13 +43,7 @@ steps:
         - APP=${APP_BRANCH}
         - MATRICULACIONES=${MATRICULACIONES_BRANCH}
       insecure: true
-services:
-  - name: start_container
-    image: orlandobrea/andes-dind:latest
-    commands:
-      - cd docker
-      - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker-compose.yml down -v
-      - API=${API_BRANCH} APP=${APP_BRANCH} docker-compose -f docker-compose.yml up -d
+
 
 
 
