@@ -18,8 +18,8 @@ steps:
         - andes-k8s/monitoreo-app
         - andes-k8s/matriculaciones
 
-  - name: kubernetes_deployment
-    image: quay.io/honestbee/drone-kubernetes
+  # - name: kubernetes_deployment
+  #   image: quay.io/honestbee/drone-kubernetes
 
 
   - name: build_image
@@ -31,7 +31,7 @@ steps:
       password:
         from_secret: REGISTRY_PASSWORD
       registry: ${DOCKER_REGISTRY_URL}
-      repo: ${DOCKER_REGISTRY_URL}/andesnqn/nginx
+      repo: ${DOCKER_REGISTRY_URL}/andes/nginx
       context: docker
       dockerfile: docker/andes.Dockerfile
       tags: ["${DRONE_BRANCH}", "${DRONE_BRANCH}-${DRONE_COMMIT_SHA}"]
